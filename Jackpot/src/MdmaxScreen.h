@@ -40,6 +40,7 @@ public:
     MdmaxScreen(int _numberOfDevices, MD_MAX72XX *mx);
     int numberOfDevices;
     void printGraphic(const uint8_t graphic[], uint16_t offset);
+    void printGraphic(const uint8_t graphic[], uint16_t offset, uint8_t size);
     MD_MAX72XX *mx;
     void blink();
     void showText(char* text);

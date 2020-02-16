@@ -13,9 +13,11 @@ public:
         reset();
     }
     virtual char* title(){return "GAME" ;};
-    virtual void reset(){resultTime = 0 ;};
+    virtual void reset(){resultTime = 0 ; iter = 0; };
     void run();
-    virtual void doRun();
+    virtual void doRun(){
+        iter +=1;
+    };
     void result(bool _win){
         win = _win;
         resultTime = millis();
@@ -23,6 +25,7 @@ public:
 protected:
     long resultTime = 0;
     boolean win;
+    long iter = 0;
 
 };
 

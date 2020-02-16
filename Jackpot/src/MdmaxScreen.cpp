@@ -14,10 +14,14 @@ MdmaxScreen::MdmaxScreen(int _numberOfDevices, MD_MAX72XX *_mx)
     mx = _mx;
 }
 
-void MdmaxScreen::printGraphic(const uint8_t graphic[], uint16_t offset)
+void MdmaxScreen::printGraphic(const uint8_t* graphic, uint16_t offset)
+{
+    printGraphic(graphic, offset, 8);
+}
+void MdmaxScreen::printGraphic(const uint8_t* graphic, uint16_t offset, uint8_t size)
 {
     mx->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
-    const uint8_t dataSize = 8; //sizeof(graphic);
+    const uint8_t dataSize = size;
 
     for (uint8_t i = 0; i < dataSize; i++)
     {

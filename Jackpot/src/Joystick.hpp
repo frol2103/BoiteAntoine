@@ -4,8 +4,8 @@
 #include <Arduino.h>
 
 #define JOYSTICK_MARGIN (200)
-#define UP (1)
-#define DOWN (2)
+#define UP (2)
+#define DOWN (1)
 #define LEFT (8)
 #define RIGHT (4)
 
@@ -14,17 +14,19 @@ class Joystick
 {
 public:
     typedef uint8_t JoystickPosition;
-    class JoystickMovementCallable{
+    class JoystickEventCallable{
     public:
         virtual void joystickPositionChange(JoystickPosition p){}
+        virtual void joystickPressed(){}
     };
 
-    Joystick(uint8_t _pinX, uint8_t _pinY)
+    Joystick(uint8_t _pinX, uint8_t _pinY, uint8_t _pinClick)
     {
         pinX = _pinX;
         pinY = _pinY;
+        pinClick = _pinClick;
     }
-    JoystickMovementCallable *onChangePosition = NULL;
+    JoystickEventCallable *eventListener = NULL;
 
     void loop()
     {
@@ -34,23 +36,33 @@ public:
             lastPosition = pos;
             lastChange = millis();
 
-            if(onChangePosition){
-                onChangePosition -> joystickPositionChange(pos);
+            if(eventListener){
+                eventListener -> joystickPositionChange(pos);
+            }
+        }
+        int clicked=digitalRead(pinClick);
+        if (clicked != lastClicked){
+            lastClicked = clicked;
+            if(clicked == LOW){
+                Serial.println("Clicked");
+                eventListener -> joystickPressed();
             }
         }
     }
     static int xPos(JoystickPosition pos){
-        return 0 + (pos & UP)?1:0 + (pos & DOWN)?-1:0;
+        return 0 + (pos & LEFT)?1:0 + (pos & RIGHT)?-1:0;
     }
     static int yPos(JoystickPosition pos){
-        return 0 + (pos & RIGHT)?1:0 + (pos & LEFT)?-1:0;
+        return 0 + (pos & UP)?1:0 + (pos & DOWN)?-1:0;
     }
 
 private:
     uint8_t pinX;
     uint8_t pinY;
+    uint8_t pinClick;
 
     uint8_t lastPosition;
+    int lastClicked;
     long lastChange;
 
     

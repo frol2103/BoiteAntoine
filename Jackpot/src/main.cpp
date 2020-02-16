@@ -4,41 +4,8 @@
 #include "InTheBox.h"
 #include "Joystick.hpp"
 #include "Drawing.h"
-
-#define DEBUG 1 // Enable or disable (default) debugging output
-
-#if DEBUG
-#define PRINT(s, v)     \
-  {                     \
-    Serial.print(F(s)); \
-    Serial.print(v);    \
-  } // Print a string followed by a value (decimal)
-#define PRINTX(s, v)      \
-  {                       \
-    Serial.print(F(s));   \
-    Serial.print(v, HEX); \
-  } // Print a string followed by a value (hex)
-#define PRINTB(s, v)      \
-  {                       \
-    Serial.print(F(s));   \
-    Serial.print(v, BIN); \
-  } // Print a string followed by a value (binary)
-#define PRINTC(s, v)       \
-  {                        \
-    Serial.print(F(s));    \
-    Serial.print((char)v); \
-  } // Print a string followed by a value (char)
-#define PRINTS(s)       \
-  {                     \
-    Serial.print(F(s)); \
-  } // Print a string
-#else
-#define PRINT(s, v)  // Print a string followed by a value (decimal)
-#define PRINTX(s, v) // Print a string followed by a value (hex)
-#define PRINTB(s, v) // Print a string followed by a value (binary)
-#define PRINTC(s, v) // Print a string followed by a value (char)
-#define PRINTS(s)    // Print a string
-#endif
+#include <step/Step.h>
+#include <Comm.h>
 
 #define HARDWARE_TYPE MD_MAX72XX::GENERIC_HW
 #define MAX_DEVICES 3
@@ -48,14 +15,16 @@
 #define BUTTON_PIN 2
 #define CHANGE_GAME_BUTTON_PIN 3
 
+#define JOYSTICK_BUTTON 4
 #define JOY_PIN_X (A0)
 #define JOY_PIN_Y (A1)
  
 
+
 MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 MdmaxScreen screen = MdmaxScreen(3, &mx);
 
- Joystick joystick = Joystick(JOY_PIN_X, JOY_PIN_Y);
+ Joystick joystick = Joystick(JOY_PIN_X, JOY_PIN_Y, JOYSTICK_BUTTON);
  Drawing drawing = Drawing(&screen, &joystick);
 Jackpot jackpot = Jackpot(&screen, BUTTON_PIN);
 InTheBox inTheBox = InTheBox(&screen, BUTTON_PIN);
@@ -98,7 +67,7 @@ void runMatrixAnimation(void)
 
 void setup()
 {
-
+  pinMode(JOYSTICK_BUTTON, INPUT_PULLUP);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(CHANGE_GAME_BUTTON_PIN, INPUT_PULLUP);
   mx.begin();
