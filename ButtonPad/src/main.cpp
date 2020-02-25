@@ -1,12 +1,20 @@
 
 #include <Arduino.h>
-#include "ButtonPad.h"
+#include "part/ButtonPad.h"
 
 
 #include "step/Step.h"
 #include "step/StepPeriod.h"
 #include "step/MultiStep.h"
-#include "SpeedPush.h"
+#include "game/SpeedPush.h"
+#include <ShiftRegister74HC595.h>
+
+#define SHIFT_REGISTER_DATA (0)
+#define SHIFT_REGISTER_CLOCK (1)
+#define SHIFT_REGISTER_LATCH (2)
+ShiftRegister74HC595<1> sr(SHIFT_REGISTER_DATA, SHIFT_REGISTER_CLOCK, SHIFT_REGISTER_LATCH);
+long iter=0;
+long lastIter=0;
 
 void pressButton(unsigned int col, unsigned int row, ButtonPad &pad){
   pad.LED_outputs[col][row]++; 
@@ -19,6 +27,7 @@ StepPeriod s2  = StepPeriod();
 MultiStep ms = MultiStep();
 StepPP steps[2] = {&s1,&s2};
 SpeedPush sp = SpeedPush(&pad);
+
 
 bool lightOn(int i) {
   pad.LED_outputs[i%NUM_LED_COLUMNS][(i/NUM_LED_COLUMNS)%NUM_LED_ROWS]++;
@@ -62,6 +71,15 @@ void setup()
 void loop() {
   sp.run();
   pad.scan();
+  
+  if(millis() - lastIter > 1000){
+    lastIter=millis();
+    iter ++;
+    sr.setAllLow();
+    sr.set(iter%8,HIGH);
+  }
+  
+  
 }
 
 

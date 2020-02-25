@@ -7,91 +7,64 @@
 #include <step/Step.h>
 #include <Comm.h>
 
-#define HARDWARE_TYPE MD_MAX72XX::GENERIC_HW
-#define MAX_DEVICES 3
-#define CLK_PIN 13  // or SCK
-#define DATA_PIN 11 // or MOSI
-#define CS_PIN 10   // or SS
-#define BUTTON_PIN 2
-#define CHANGE_GAME_BUTTON_PIN 3
+#include <ShiftRegister74HC595.h>
+#include "part/DigitDisplay.h"
 
-#define JOYSTICK_BUTTON 4
-#define JOY_PIN_X (A0)
-#define JOY_PIN_Y (A1)
- 
+#define SHIFT_REGISTER_DATA (0)
+#define SHIFT_REGISTER_CLOCK (1)
+#define SHIFT_REGISTER_LATCH (2)
 
+ShiftRegister74HC595<3> sr(49,50,48);
+DigitDisplay dd(&sr);
+  //SHIFT_REGISTER_DATA, SHIFT_REGISTER_CLOCK, SHIFT_REGISTER_LATCH);
+long iter=-1;
+long lastIter=-1;
 
-MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
-MdmaxScreen screen = MdmaxScreen(3, &mx);
+long lastRead = 0;
 
- Joystick joystick = Joystick(JOY_PIN_X, JOY_PIN_Y, JOYSTICK_BUTTON);
- Drawing drawing = Drawing(&screen, &joystick);
-Jackpot jackpot = Jackpot(&screen, BUTTON_PIN);
-InTheBox inTheBox = InTheBox(&screen, BUTTON_PIN);
-
-Game *games[] = {
-    &drawing,
-    &jackpot,
-    &inTheBox,
-};
-
-int numberOfGames = 3;
-
-int state = 0;
-int previousState = -1;
-int lastChangeGameButtonState = HIGH;
-bool showingText = true;
-
-void resetMatrix(void)
-{
-  screen.reset();
-}
-
-void runMatrixAnimation(void)
-{
-  if(previousState != state){
-    screen.showText(games[state]->title());
-    showingText = true;
-    games[state] -> reset();
-    previousState = state;
-  }
-  if (showingText)
-  {
-    showingText = !screen.showCurrentText();
-  }
-  else
-  {
-    games[state]->run();
-  }
-}
+int buttonState = 0;
+int lastButtonState = 5;
 
 void setup()
 {
-  pinMode(JOYSTICK_BUTTON, INPUT_PULLUP);
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-  pinMode(CHANGE_GAME_BUTTON_PIN, INPUT_PULLUP);
-  mx.begin();
-  for (int i = 0; i < numberOfGames; i++)
-  {
-    games[i]->init();
-  }
+
+
+   pinMode(9, INPUT);
   Serial.begin(9600);
+      sr.setAllLow();
+    
+  Serial.println("Hello");
 }
 
 void loop()
 {
-  joystick.loop();
-  int buttonState = digitalRead(CHANGE_GAME_BUTTON_PIN);
-  if (lastChangeGameButtonState != buttonState)
-  {
-    if (buttonState == LOW)
-    {
-      state++;
-      state%=numberOfGames;
-    
-      Serial.println("\nCHANGE_GAME");
-    }
-    lastChangeGameButtonState = buttonState;
+
+  
+//Serial.println(analogRead(A1));
+//delay(200);
+
+
+if(
+  millis() - lastIter > 1000
+){
+  lastIter=millis();
+    iter++;
+    dd.code[0]=iter%10;
+    dd.code[1]=(iter+1)%10;
+    dd.code[2]=(iter+2)%10;
+    dd.code[3]=(iter+3)%10;
+
+    sr.setAllLow();
+    int pin =(iter%(24-13))+13;
+    sr.set(pin,HIGH);
+
+    Serial.print("pull up ");
+    Serial.println(pin);
+
+
   }
-  runMatrixAnimation();
+  dd.run();
 }
+  
+
+

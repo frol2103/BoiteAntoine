@@ -2,7 +2,7 @@
 #define SpeedPush_h
 
 #include "step/GameStep.h"
-#include "ButtonPad.h"
+#include "../part/ButtonPad.h"
 
 #define RED_PERIOD (30)
 #define GREEN_PERIOD (5)
