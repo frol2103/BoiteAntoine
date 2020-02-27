@@ -38,7 +38,7 @@ public:
         
 
         sr -> updateRegisters();
-        delay(1);
+        
     }
 private:
     ShiftRegister74HC595<3> *sr;

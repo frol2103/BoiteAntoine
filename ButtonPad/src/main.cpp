@@ -7,6 +7,7 @@
 #include "step/StepPeriod.h"
 #include "step/MultiStep.h"
 #include "game/SpeedPush.h"
+#include "game/SimplePush.h"
 #include <ShiftRegister74HC595.h>
 
 #define SHIFT_REGISTER_DATA (0)
@@ -26,7 +27,9 @@ StepPeriod s1  = StepPeriod();
 StepPeriod s2  = StepPeriod();
 MultiStep ms = MultiStep();
 StepPP steps[2] = {&s1,&s2};
-SpeedPush sp = SpeedPush(&pad);
+//SpeedPush sp = SpeedPush(&pad);
+
+SimplePush sp = SimplePush(&pad);
 
 
 bool lightOn(int i) {

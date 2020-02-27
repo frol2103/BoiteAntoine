@@ -13,12 +13,12 @@ class Drawing : public Game, public Joystick::JoystickEventCallable
 {
 public: 
     Drawing(MdmaxScreen *screen, Joystick* joystick);
-    char* title(){return "D";}
+    char* title(){return "Dessin";}
     void reset() { 
         Game::reset();
         joystick -> eventListener = (Joystick::JoystickEventCallable *) this;   
         for(int i = 0; i < IMAGE_COLS ;i++){
-            image[i] = i;
+            image[i] = 0;
         }
     }
     void doRun(){
@@ -74,7 +74,7 @@ public:
         }
     }
     byte image[3*8];
-    uint8_t mode = 1;
+    uint8_t mode = 0;
 
 
 

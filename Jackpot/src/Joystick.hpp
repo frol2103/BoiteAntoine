@@ -6,8 +6,8 @@
 #define JOYSTICK_MARGIN (200)
 #define UP (2)
 #define DOWN (1)
-#define LEFT (8)
-#define RIGHT (4)
+#define LEFT (4)
+#define RIGHT (8)
 
 
 class Joystick
