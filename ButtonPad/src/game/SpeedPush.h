@@ -7,7 +7,7 @@
 #define RED_PERIOD (30)
 #define GREEN_PERIOD (5)
 
-class SpeedPush : GameStep, ButtonPad::EventListener
+class SpeedPush : public GameStep, ButtonPad::EventListener
 {
 
 public:

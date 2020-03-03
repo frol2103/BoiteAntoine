@@ -8,7 +8,15 @@
 #include "step/MultiStep.h"
 #include "game/SpeedPush.h"
 #include "game/SimplePush.h"
+#include "game/DrawingBPad.h"
 #include <ShiftRegister74HC595.h>
+#include "part/RgbLedArray.hpp"
+
+#include "part/TriSelect.h"
+
+
+TriSelect triselect = TriSelect();
+
 
 #define SHIFT_REGISTER_DATA (0)
 #define SHIFT_REGISTER_CLOCK (1)
@@ -27,10 +35,14 @@ StepPeriod s1  = StepPeriod();
 StepPeriod s2  = StepPeriod();
 MultiStep ms = MultiStep();
 StepPP steps[2] = {&s1,&s2};
-//SpeedPush sp = SpeedPush(&pad);
 
-SimplePush sp = SimplePush(&pad);
+RgbLedArray rgbLedArray = RgbLedArray();
 
+SpeedPush speedPush= SpeedPush(&pad);
+SimplePush simplePush = SimplePush(&pad);
+DrawingBPad drawingBPad = DrawingBPad(&pad);
+
+GameStep *currentGame = &speedPush;
 
 bool lightOn(int i) {
   pad.LED_outputs[i%NUM_LED_COLUMNS][(i/NUM_LED_COLUMNS)%NUM_LED_ROWS]++;
@@ -67,12 +79,30 @@ void setup()
   
   ms.steps=steps;
 
-  sp.init();
+  speedPush.init();
+  simplePush.init();
   Serial.println("Setup Complete.");
+
+  rgbLedArray.init();
 }
 
 void loop() {
-  sp.run();
+
+  triselect.run();
+
+
+  if(triselect.hasNewState()){
+    if(triselect.state == 0){
+      currentGame= &speedPush;
+    } else if(triselect.state == 1) {
+      currentGame = &simplePush;
+    } else {
+      currentGame = &drawingBPad;
+    }
+    currentGame->init();
+  }
+  currentGame->run();
+
   pad.scan();
   
   if(millis() - lastIter > 1000){
@@ -82,7 +112,7 @@ void loop() {
     sr.set(iter%8,HIGH);
   }
   
-  
+  rgbLedArray.run();
 }
 
 

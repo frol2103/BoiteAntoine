@@ -5,7 +5,7 @@
 #include "../part/ButtonPad.h"
 
 
-class SimplePush : GameStep, ButtonPad::EventListener
+class SimplePush : public GameStep, ButtonPad::EventListener
 {
 
 public:
