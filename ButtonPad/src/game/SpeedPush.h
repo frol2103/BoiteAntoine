@@ -1,6 +1,8 @@
 #ifndef SpeedPush_h
 #define SpeedPush_h
 
+#include <Arduino.h>
+
 #include "step/GameStep.h"
 #include "../part/ButtonPad.h"
 
@@ -21,13 +23,20 @@ public:
     ButtonPad *pad;
     bool run()
     {
-        if (millis() > (lastAction + period))
-        {
-            lastAction = millis();
-            bool result = runAction(iter);
-            iter++;
-            return result;
+
+        if(lostMillis != 0 && millis()>(lostMillis+10000L)){
+            init();
+        } else if(lostMillis==0) {
+            if (millis() > (lastAction + period))
+                    {
+                        lastAction = millis();
+                        bool result = runAction(iter);
+                        iter++;
+                        return result;
+                    }
         }
+
+        
         return false;
     }
     void init()
@@ -39,21 +48,49 @@ public:
         }
         lastAction = 0;
         iter = 0;
+        this->lostMillis=0L;
+        Serial.println("init");
         pad->eventListener = this;
     }
 
     bool runAction(long iter)
     {
+        
         updateStates(iter);
-        for(int i = 0; i<= (iter/10);i++){
-
+        if(isLost()){
+            this->lostMillis = millis();
+            for(int i = 0; i<= 16;i++){updateCell(i,RED);}
+            updatePad();
+            return false;
+        }
         
-        
-        int r = randomFree();
-        updateCell(r,GREEN);
-    }
+  
+        if(iter > 0 && iter%10 == 0){
+            addGreen((iter/10)%16);
+        } else {
+            addGreen(1);
+        }
+  
+    
         updatePad();
         return false;
+    }
+
+    bool isLost(){
+        int countRed=0;
+        for(int i = 0; i<= 16;i++){
+            if(cellState[i]==RED){
+                countRed++;
+            }
+        }
+        return countRed>5;
+    }
+
+    void addGreen(int n){
+        for(int i = 0; i< n;i++){
+            int r = randomFree();
+            updateCell(r,GREEN);
+        }
     }
 
     void updateStates(long iter)
@@ -116,6 +153,7 @@ private:
     unsigned long iter = 0;
     unsigned int cellState[16];
     unsigned long cellStateSetIter[16];
+    unsigned long lostMillis;
 };
 
 #endif
