@@ -6,8 +6,13 @@
 #include "step/GameStep.h"
 #include "../part/ButtonPad.h"
 
+#include <log/LoggerFactory.hpp>
+
 #define RED_PERIOD (30)
 #define GREEN_PERIOD (5)
+
+LoggerFactory lf = LoggerFactory();
+
 
 class SpeedPush : public GameStep, ButtonPad::EventListener
 {
@@ -24,7 +29,8 @@ public:
     bool run()
     {
 
-        if(lostMillis != 0 && millis()>(lostMillis+10000L)){
+        
+        if(lostMillis != 0 && millis() > (lostMillis+10000)){
             init();
         } else if(lostMillis==0) {
             if (millis() > (lastAction + period))
@@ -48,6 +54,8 @@ public:
         }
         lastAction = 0;
         iter = 0;
+       
+        Serial.println(lostMillis);
         this->lostMillis=0L;
         Serial.println("init");
         pad->eventListener = this;
