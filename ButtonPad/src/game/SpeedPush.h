@@ -58,8 +58,10 @@ public:
         
         updateStates(iter);
         if(isLost()){
+            Serial.print("Set lost millis ");
+            Serial.println(millis());
             this->lostMillis = millis();
-            for(int i = 0; i<= 16;i++){updateCell(i,RED);}
+            for(int i = 0; i< 16;i++){updateCell(i,RED);}
             updatePad();
             return false;
         }
