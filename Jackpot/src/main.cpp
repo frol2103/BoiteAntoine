@@ -12,6 +12,8 @@
 #include "part/DigitDisplay.h"
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h> 
+#include "SpeedClick.h"
+#include <part/Button.h>
 
 
 
@@ -38,6 +40,7 @@ int lastButtonState = 5;
 #define DATA_PIN 51 // or MOSI
 #define CS_PIN 53   // or SS
 #define BUTTON_PIN 30
+#define BUTTON_PIN_SCREEN_3 32
 #define CHANGE_GAME_BUTTON_PIN 31
 
 #define JOY_PIN_X (A1)
@@ -47,6 +50,8 @@ int lastButtonState = 5;
 #define VOLTMETER_PIN (9)
 
  
+Button buttonScreen1 = Button(BUTTON_PIN);
+Button buttonScreen3 = Button(BUTTON_PIN_SCREEN_3);
 
 MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 MdmaxScreen screen = MdmaxScreen(3, &mx);
@@ -55,16 +60,17 @@ MdmaxScreen screen = MdmaxScreen(3, &mx);
  Drawing drawing = Drawing(&screen, &joystick);
 Jackpot jackpot = Jackpot(&screen, BUTTON_PIN);
 InTheBox inTheBox = InTheBox(&screen, BUTTON_PIN);
+SpeedClick speedClick = SpeedClick(&screen, &buttonScreen1, &buttonScreen3);
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  
 
 Game *games[] = {
-   
     &jackpot,
     &inTheBox,
-     &drawing,
+    &speedClick,
+    &drawing,
 };
 
-int numberOfGames = 3;
+int numberOfGames = 4;
 
 int state = 0;
 int previousState = -1;
@@ -124,6 +130,8 @@ void setup()
 
 void loop()
 {
+  buttonScreen1.run();
+  buttonScreen3.run();
 
 if(
   millis() - lastIter > 1000

@@ -18,6 +18,10 @@ public:
         lastPopedStateCount = obj->stateChangeCount();
         return b;
     }
+
+    void reset(){
+        lastPopedStateCount = obj->stateChangeCount();
+    }
 };
 
 
