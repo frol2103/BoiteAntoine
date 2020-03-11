@@ -1,27 +1,32 @@
 #ifndef TRISELECT_H
 #define TRISELECT_H
 
-#include "StatePoper.h"
+#include <part/StatePoper.h>
+
+#include <part/StateCounter.h>
 
 #define BUTTON_1_PIN (28)
 #define BUTTON_2_PIN (29)
 
 
-class TriSelect : public StatePoper
+class TriSelect : public StatePoper, public StateCounter
 {
 private:
     /* dat */
     
 public:
     int state = -1;
-    TriSelect(/* args */){};
+    
+    TriSelect() : StatePoper((StateCounter*)this){
+
+    };
     ~TriSelect(){};
     
     void run(){
         byte newState = readState();
         if(newState != state){
             state = newState;
-            StatePoper::updateState();
+            StateCounter::updateState();
             Serial.print("TriSelect state : ");
             Serial.println(state);
         }
