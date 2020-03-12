@@ -14,8 +14,10 @@
 
 #include "part/TriSelect.h"
 #include <Wire.h>
+#include <LiquidCrystal_I2C.h> 
 
 TriSelect triselect = TriSelect();
+LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  
 
 
 #define SHIFT_REGISTER_DATA (0)
@@ -84,6 +86,12 @@ void setup()
   Serial.println("Setup Complete.");
 
   rgbLedArray.init();
+  lcd.begin(16,2);
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("Antoinematic");
+  lcd.setCursor(8,1);
+  lcd.print("-----v1");
 }
 
 void loop() {

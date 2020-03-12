@@ -41,8 +41,10 @@ public:
         
     }
     void set(int i){
-        code[1] = i%10;
-        code[0] = i/10%10;
+        code[3] = i%10;
+        code[2] = i/10%10;
+        code[1] = i/100%10;
+        code[0] = i/1000%10;
     }
 private:
     ShiftRegister74HC595<3> *sr;

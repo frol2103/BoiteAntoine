@@ -11,7 +11,7 @@
 #include <ShiftRegister74HC595.h>
 #include "part/DigitDisplay.h"
 #include <Wire.h> 
-//#include <LiquidCrystal_I2C.h> 
+
 #include "SpeedClick.h"
 #include <part/Button.h>
 #include <Wire.h>
@@ -61,7 +61,6 @@ MdmaxScreen screen = MdmaxScreen(3, &mx);
 Jackpot jackpot = Jackpot(&screen, BUTTON_PIN);
 InTheBox inTheBox = InTheBox(&screen, BUTTON_PIN);
 SpeedClick speedClick = SpeedClick(&screen, &buttonScreen1, &buttonScreen3);
-//LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  
 
 Game *games[] = {
     &jackpot,
@@ -130,14 +129,7 @@ void setup()
     games[i]->init();
   }
 
-    //lcd.begin(16,2); // sixteen characters across - 2 lines
-  //lcd.backlight();
-  // first character - 1st line
-  //lcd.setCursor(0,0);
-  //lcd.print("Antoinematic");
-  // 8th character - 2nd line 
-  //lcd.setCursor(8,1);
-  //lcd.print("-----v1");
+    
   
 }
 

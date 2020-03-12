@@ -31,7 +31,7 @@ public:
     {
 
         
-        if(lostMillis != 0 && millis() > (lostMillis+10000)){
+        if(lostMillis != 0 && millis() > (lostMillis+3000)){
             init();
         } else if(lostMillis==0) {
             if (millis() > (lastAction + period))
