@@ -40,6 +40,10 @@ public:
         sr -> updateRegisters();
         
     }
+    void set(int i){
+        code[1] = i%10;
+        code[0] = i/10%10;
+    }
 private:
     ShiftRegister74HC595<3> *sr;
     long iter = 0;

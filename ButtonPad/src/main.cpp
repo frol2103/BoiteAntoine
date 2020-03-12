@@ -13,7 +13,7 @@
 #include "part/RgbLedArray.hpp"
 
 #include "part/TriSelect.h"
-
+#include <Wire.h>
 
 TriSelect triselect = TriSelect();
 
@@ -61,7 +61,7 @@ void initRandom() {
 
 void setup() 
 {
-  
+  Wire.begin();
 
 
 

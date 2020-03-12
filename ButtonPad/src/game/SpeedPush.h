@@ -7,6 +7,7 @@
 #include "../part/ButtonPad.h"
 
 #include <log/LoggerFactory.hpp>
+#include <Wire.h>
 
 #define RED_PERIOD (30)
 #define GREEN_PERIOD (5)
@@ -60,6 +61,7 @@ public:
         Serial.println("init");
         pad->eventListener = this;
         period=500;
+        score=0;
     }
 
     void setLost(){
@@ -130,6 +132,13 @@ public:
         if (cellState[cellIndex] == GREEN)
         {
             updateCell(cellIndex, 0);
+            score++;
+            Serial.print("score");
+            Serial.println(score);
+            Wire.beginTransmission(4);
+            Wire.write(score); 
+            Wire.write(score>>8);
+            Wire.endTransmission(); 
         } 
         else if (cellState[cellIndex] ==0)
         {
@@ -174,6 +183,7 @@ private:
     unsigned long period = 500;
     unsigned long lastAction = 0;
     unsigned long iter = 0;
+    unsigned int score = 0;
     unsigned int cellState[16];
     unsigned long cellStateSetIter[16];
     unsigned long lostMillis;
