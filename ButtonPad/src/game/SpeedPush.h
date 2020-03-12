@@ -59,6 +59,15 @@ public:
         this->lostMillis=0L;
         Serial.println("init");
         pad->eventListener = this;
+        period=500;
+    }
+
+    void setLost(){
+        Serial.print("Set lost millis ");
+        Serial.println(millis());
+        this->lostMillis = millis();
+        for(int i = 0; i< 16;i++){updateCell(i,RED);}
+        updatePad();
     }
 
     bool runAction(long iter)
@@ -66,22 +75,18 @@ public:
         
         updateStates(iter);
         if(isLost()){
-            Serial.print("Set lost millis ");
-            Serial.println(millis());
-            this->lostMillis = millis();
-            for(int i = 0; i< 16;i++){updateCell(i,RED);}
-            updatePad();
+            setLost();
             return false;
         }
         
   
         if(iter > 0 && iter%10 == 0){
-            addGreen((iter/10)%16);
+            addGreen((iter/10)%5);
         } else {
             addGreen(1);
         }
   
-    
+        period--; 
         updatePad();
         return false;
     }
@@ -125,6 +130,14 @@ public:
         if (cellState[cellIndex] == GREEN)
         {
             updateCell(cellIndex, 0);
+        } 
+        else if (cellState[cellIndex] ==0)
+        {
+            updateCell(cellIndex, RED);
+        } 
+        else if (cellState[cellIndex] == RED)
+        {
+            setLost();
         } 
         updatePad();
     }
