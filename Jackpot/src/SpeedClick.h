@@ -43,11 +43,12 @@ void SpeedClick::doRun(){
   
     Game::doRun();
     screen -> mx->control(MD_MAX72XX::UPDATE, MD_MAX72XX::OFF);
+    
 
-    if(spB1->hasNewState() && b1->clicked()){
+    if(spB1->hasNewState()){
         _count1++;
     }
-    if(spB2->hasNewState() && b2->clicked()){
+    if(spB2->hasNewState()){
         _count2++;;
     }
 
@@ -67,8 +68,13 @@ void SpeedClick::doRun(){
 };
 
 void SpeedClick::setScreen(int count, int colOffset){
-    for(int i = 0; i<64; i++){
-        screen -> mx -> setPoint(i/8,colOffset+i%8,count>i);
+
+    for(int c = 0; c<8; c++){
+        int x = 0;
+        for(int i = 0; i<8; i++){
+            x |= (count > c+i*8) << i;
+        }
+        screen -> mx -> setColumn(c+colOffset,x);
     }
 }
 #endif
